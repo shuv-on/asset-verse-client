@@ -26,7 +26,7 @@ const NavBar = () => {
         `flex items-center gap-2 m-2 hover:border-b-2 hover:border-sky-500 font-medium ${isActive ? 'border-b-2 border-sky-500 text-sky-500' : ''}`;
 
     const navLinks = <>
-        <li><NavLink to="/" className={getLinkClass}>Home</NavLink></li>
+        <li><NavLink to="/" className={getLinkClass}><span className='text-gray-500 '>Home</span></NavLink></li>
         
         {!user && (
             <>
