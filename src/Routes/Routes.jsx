@@ -3,16 +3,30 @@ import { RouterProvider } from "react-router/dom";
 import Root from "../pages/Root/Root";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import Home from "../pages/Home/Home";
+import Login from "../pages/Login/Login";
 
 export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root/>,
-    errorElement: <ErrorPage/>,
-    children: [{
+    {
         path: "/",
-        element: <Home/>,
-
-    }]
-  },
+        element: <Root />,
+        errorElement: <ErrorPage />,
+        children: [
+            {
+                path: "/",
+                element: <Home />,
+            },
+            {
+              path: "/login",
+              element: <Login />,
+            },
+           /*  {
+              path: "/join-employee",
+              element: <JoinEmployee />,
+            },
+            {
+              path: "/join-hr",
+              element: <JoinHR />,
+            }, */
+        ],
+    },
 ]);
