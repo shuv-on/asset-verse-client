@@ -1,14 +1,35 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
+import useAuth from '../../hooks/useAuth';
 
 const Login = () => {
-    const handleLogin = (e) => {
+    const { signIn, googleSignIn } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
+
+    const handleLogin = async (e) => {
         e.preventDefault();
         const form = e.target;
         const email = form.email.value;
         const password = form.password.value;
-        console.log({ email, password });
+        
+        try {
+            await signIn(email, password);
+            navigate(from, { replace: true });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        try {
+            await googleSignIn();
+            navigate(from, { replace: true });
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -52,7 +73,11 @@ const Login = () => {
 
                     <div className="divider my-6 text-gray-500 font-medium">OR</div>
                    
-                    <button type="button" className="btn btn-outline w-full flex items-center justify-center gap-3 font-semibold text-gray-700 hover:bg-gray-100 hover:border-gray-400">
+                    <button 
+                        onClick={handleGoogleLogin}
+                        type="button" 
+                        className="btn btn-outline w-full flex items-center justify-center gap-3 font-semibold text-gray-700 hover:bg-gray-100 hover:border-gray-400"
+                    >
                         <FcGoogle className="text-2xl" />
                         Sign in with Google
                     </button>

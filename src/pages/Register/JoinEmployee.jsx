@@ -1,15 +1,45 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import useAuth from '../../hooks/useAuth';
+import useAxiosPublic from '../../hooks/useAxiosPublic';
 
 const JoinEmployee = () => {
-    const handleRegister = (e) => {
+    const { createUser, updateUserProfile } = useAuth();
+    const axiosPublic = useAxiosPublic();
+    const navigate = useNavigate();
+
+    const handleRegister = async (e) => {
         e.preventDefault();
         const form = e.target;
         const name = form.name.value;
         const email = form.email.value;
         const password = form.password.value;
         const dob = form.dob.value;
-        console.log({ name, email, password, dob });
+
+        try {
+            await createUser(email, password);
+            
+            await updateUserProfile(name, "https://i.ibb.co/37hjkY0/user.png");
+
+            const userInfo = {
+                name,
+                email,
+                role: 'employee',
+                dateOfBirth: dob,
+                companyName: "",
+                companyLogo: "",
+                status: 'unverified'
+            };
+
+            const { data } = await axiosPublic.post('/users', userInfo);
+            
+            if (data.insertedId) {
+                navigate('/');
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -77,7 +107,7 @@ const JoinEmployee = () => {
 
                     {/* Submit Button */}
                     <div className="form-control mt-8">
-                        <button className="btn bg-sky-600 hover:bg-sky-800 text-white text-lg font-bold w-full border-none">
+                        <button type="submit" className="btn bg-sky-600 hover:bg-sky-800 text-white text-lg font-bold w-full border-none">
                             Register
                         </button>
                     </div>

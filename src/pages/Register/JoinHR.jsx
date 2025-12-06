@@ -1,18 +1,51 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import useAuth from '../../hooks/useAuth';
+import useAxiosPublic from '../../hooks/useAxiosPublic';
+
 
 const JoinHR = () => {
-    const handleRegister = (e) => {
+    const { createUser, updateUserProfile } = useAuth();
+    const axiosPublic = useAxiosPublic();
+    const navigate = useNavigate();
+
+    const handleRegister = async (e) => {
         e.preventDefault();
         const form = e.target;
         const name = form.name.value;
         const companyName = form.companyName.value;
+        const logo = form.logo.value;
+        const details = form.details.value;
         const email = form.email.value;
         const password = form.password.value;
         const dob = form.dob.value;
-        const logo = form.logo.files[0];
 
-        console.log({ name, companyName, email, password, dob, logo });
+        try {
+            await createUser(email, password);
+            
+            await updateUserProfile(name, logo);
+
+            const hrInfo = {
+                name,
+                email,
+                role: 'hr',
+                companyName,
+                companyLogo: logo,
+                companyDetails: details,
+                dateOfBirth: dob,
+                packageLimit: 5,
+                status: 'verified'
+            };
+
+            const { data } = await axiosPublic.post('/users', hrInfo);
+            
+            if (data.insertedId) {
+                navigate('/');
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
