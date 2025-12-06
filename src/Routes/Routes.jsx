@@ -4,6 +4,8 @@ import Root from "../pages/Root/Root";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import Home from "../pages/Home/Home";
 import Login from "../pages/Login/Login";
+import JoinEmployee from "../pages/Register/JoinEmployee";
+import JoinHR from "../pages/Register/JoinHR";
 
 export const router = createBrowserRouter([
     {
@@ -19,14 +21,14 @@ export const router = createBrowserRouter([
               path: "/login",
               element: <Login />,
             },
-           /*  {
+            {
               path: "/join-employee",
               element: <JoinEmployee />,
             },
             {
               path: "/join-hr",
               element: <JoinHR />,
-            }, */
+            },
         ],
     },
 ]);

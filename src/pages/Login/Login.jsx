@@ -40,7 +40,7 @@ const Login = () => {
                         <input 
                             type="password" 
                             name="password" 
-                            placeholder="••••••••" 
+                            placeholder="*******" 
                             className="input input-bordered w-full focus:border-sky-500 focus:ring-2 focus:ring-sky-200" 
                             required 
                         />
