@@ -6,6 +6,7 @@ import Home from "../pages/Home/Home";
 import Login from "../pages/Login/Login";
 import JoinEmployee from "../pages/Register/JoinEmployee";
 import JoinHR from "../pages/Register/JoinHR";
+import AssetList from "../pages/HR/AssetList";
 
 export const router = createBrowserRouter([
     {
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
             {
               path: "/join-hr",
               element: <JoinHR />,
+            },
+            {
+              path: "/asset-list",
+              element: <AssetList/>,
             },
         ],
     },
