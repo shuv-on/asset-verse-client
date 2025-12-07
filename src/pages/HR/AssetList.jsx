@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import useAuth from '../../hooks/useAuth';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'; 
+import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2'; 
 
 const AssetList = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
     
-   
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('');
 
-    
     const { data: assets = [], refetch, isLoading } = useQuery({
         queryKey: ['assets', user?.email, search, filter],
         queryFn: async () => {
             const res = await axiosSecure.get(`/assets?email=${user.email}&search=${search}&filter=${filter}`);
             return res.data;
-        }
+        },
+       
+        placeholderData: (previousData) => previousData, 
     });
 
-   
     const handleDelete = (id) => {
         Swal.fire({
             title: "Are you sure?",
@@ -42,16 +42,16 @@ const AssetList = () => {
         });
     };
 
+    
     if (isLoading) return <div className="text-center mt-20"><span className="loading loading-spinner loading-lg"></span></div>;
 
     return (
         <div className="container mx-auto px-4 py-8">
             <h2 className="text-3xl font-bold text-center text-sky-700 mb-8">Asset List</h2>
 
-            {/* search and filter */}
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
                 
-                {/* src box */}
+                {/* Search box */}
                 <div className="form-control w-full md:w-1/3">
                     <input 
                         type="text" 
@@ -59,10 +59,11 @@ const AssetList = () => {
                         className="input input-bordered w-full"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
+                      
                     />
                 </div>
 
-                {/* filter menu */}
+                {/* Filter menu */}
                 <div className="form-control w-full md:w-1/4">
                     <select 
                         className="select select-bordered w-full"
@@ -76,7 +77,7 @@ const AssetList = () => {
                 </div>
             </div>
 
-            {/* list table */}
+            {/* List table */}
             <div className="overflow-x-auto bg-base-100 shadow-xl rounded-lg">
                 <table className="table w-full">
                     <thead className="bg-sky-100 text-sky-800 text-lg">
@@ -104,7 +105,10 @@ const AssetList = () => {
                                     <td>{asset.productQuantity}</td>
                                     <td>{asset.dateAdded}</td>
                                     <td className="flex gap-2">
-                                        <button className="btn btn-sm btn-info text-white">Update</button>
+                                        <Link to={`/update-asset/${asset._id}`}>
+                                            <button className="btn btn-sm btn-info text-white">Update</button>
+                                        </Link>
+                                        
                                         <button 
                                             onClick={() => handleDelete(asset._id)}
                                             className="btn btn-sm btn-error text-white"
@@ -116,7 +120,10 @@ const AssetList = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="6" className="text-center py-4 text-gray-500">No assets found.</td>
+                                <td colSpan="6" className="text-center py-4 text-gray-500">
+                               
+                                    {search ? "No matching assets found." : "No assets added yet."}
+                                </td>
                             </tr>
                         )}
                     </tbody>
