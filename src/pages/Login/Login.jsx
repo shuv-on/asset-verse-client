@@ -11,6 +11,7 @@ const Login = () => {
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
 
+   
     const [loginRole, setLoginRole] = useState('employee');
 
     const handleLogin = async (e) => {
@@ -31,22 +32,35 @@ const Login = () => {
         try {
             const result = await googleSignIn();
             
-           
+          
             const userInfo = {
                 email: result.user?.email,
                 name: result.user?.displayName,
                 role: loginRole, 
-                status: 'verified',
+                status: 'verified', 
                 companyName: "",
-                companyLogo: ""
+                companyLogo: "",
+                dateOfBirth: "", 
             }
 
+           
+            if (loginRole === 'hr') {
+                userInfo.packageLimit = 5;
+                userInfo.currentEmployees = 0;
+                userInfo.subscription = 'basic';
+            }
+
+            console.log("Sending to DB:", userInfo);
+
             
-            await axiosPublic.post('/users', userInfo);
+            const { data } = await axiosPublic.post('/users', userInfo);
+            console.log("Server Response:", data);
             
+           
             navigate(from, { replace: true });
+
         } catch (error) {
-            console.log(error);
+            console.log("Google Login Error:", error);
         }
     };
 
@@ -78,28 +92,30 @@ const Login = () => {
 
                     <div className="divider my-6 text-gray-500 font-medium">OR</div>
                    
-                    {/* Google role selection */}
-                    <div className='p-4 bg-gray-100 rounded-lg mb-4'>
-                        <p className='text-center text-sm font-semibold text-gray-600 mb-2'>Select Role for Google Login:</p>
+                    {/* Role Selection for Google */}
+                    <div className='p-4 bg-gray-50 border border-gray-200 rounded-lg mb-4'>
+                        <p className='text-center text-sm font-semibold text-gray-600 mb-3'>
+                            Joining with Google? Select Role:
+                        </p>
                         <div className="flex justify-center gap-6">
-                            <label className="flex items-center gap-2 cursor-pointer">
+                            <label className="flex items-center gap-2 cursor-pointer hover:text-sky-600 transition-colors">
                                 <input 
                                     type="radio" 
                                     name="role" 
                                     value="employee" 
-                                    className="radio radio-info" 
+                                    className="radio radio-info radio-sm" 
                                     checked={loginRole === 'employee'}
                                     onChange={() => setLoginRole('employee')}
                                 />
                                 <span className="font-medium text-gray-700">Employee</span>
                             </label>
                             
-                            <label className="flex items-center gap-2 cursor-pointer">
+                            <label className="flex items-center gap-2 cursor-pointer hover:text-sky-600 transition-colors">
                                 <input 
                                     type="radio" 
                                     name="role" 
                                     value="hr" 
-                                    className="radio radio-info" 
+                                    className="radio radio-info radio-sm" 
                                     checked={loginRole === 'hr'}
                                     onChange={() => setLoginRole('hr')}
                                 />
