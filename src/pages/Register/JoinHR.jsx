@@ -3,11 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import useAxiosPublic from '../../hooks/useAxiosPublic';
 import toast from 'react-hot-toast';
+import useRole from '../../hooks/useRole';
 
 const JoinHR = () => {
     const { createUser, updateUserProfile } = useAuth();
     const axiosPublic = useAxiosPublic();
     const navigate = useNavigate();
+    const [, , refetch] = useRole();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -34,12 +36,15 @@ const JoinHR = () => {
                 companyDetails: details,
                 dateOfBirth: dob,
                 packageLimit: 5,
+                currentEmployees: 0, 
+                subscription: 'basic',
                 status: 'verified'
             };
 
             const { data } = await axiosPublic.post('/users', hrInfo);
             
             if (data.insertedId) {
+                refetch();
                 toast.success('Registration Successful!');
                 navigate('/');
             }

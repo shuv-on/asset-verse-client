@@ -4,6 +4,7 @@ import { FcGoogle } from 'react-icons/fc';
 import useAuth from '../../hooks/useAuth';
 import useAxiosPublic from '../../hooks/useAxiosPublic';
 import toast from 'react-hot-toast';
+import useRole from '../../hooks/useRole';
 
 const Login = () => {
     const { signIn, googleSignIn } = useAuth();
@@ -11,6 +12,7 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
+    const [, , refetch] = useRole();
 
    
     const [loginRole, setLoginRole] = useState('employee');
@@ -23,6 +25,7 @@ const Login = () => {
         
         try {
             await signIn(email, password);
+            refetch();
             toast.success('Login Successful!');
             navigate(from, { replace: true });
         } catch (error) {
@@ -53,11 +56,8 @@ const Login = () => {
                 userInfo.subscription = 'basic';
             }
 
-            console.log("Sending to DB:", userInfo);
-
-            
-            const { data } = await axiosPublic.post('/users', userInfo);
-            console.log("Server Response:", data);
+            await axiosPublic.post('/users', userInfo);
+            refetch();
             toast.success('Google Login Successful!');
            
             navigate(from, { replace: true });
