@@ -17,18 +17,28 @@ const AllRequests = () => {
     });
 
     
-    const handleStatus = async (id, status, assetId) => {
+    const handleStatus = async (id, status, req) => {
         try {
-            const { data } = await axiosSecure.patch(`/requests/${id}`, { status, assetId });
+            const updateInfo = { 
+                status, 
+                assetId: req.assetId,
+                requesterEmail: req.requesterEmail, 
+                hrEmail: user.email,               
+                hrName: user.displayName           
+            };
+
+            const { data } = await axiosSecure.patch(`/requests/${id}`, updateInfo);
+            
             if (data.modifiedCount > 0) {
                 toast.success(`Request ${status} successfully!`);
-                refetch(); 
+                refetch();
             }
         } catch (error) {
             console.error(error);
             toast.error('Action failed');
         }
     };
+
 
     if (isLoading) return <div className="text-center mt-20"><span className="loading loading-spinner loading-lg"></span></div>;
 
@@ -76,13 +86,13 @@ const AllRequests = () => {
                                         {req.status === 'pending' && (
                                             <>
                                                 <button 
-                                                    onClick={() => handleStatus(req._id, 'approved', req.assetId)}
+                                                    onClick={() => handleStatus(req._id, 'approved', req)}
                                                     className="btn btn-sm btn-success text-white"
                                                 >
                                                     Approve
                                                 </button>
                                                 <button 
-                                                    onClick={() => handleStatus(req._id, 'rejected', req.assetId)}
+                                                    onClick={() => handleStatus(req._id, 'rejected', req)}
                                                     className="btn btn-sm btn-error text-white"
                                                 >
                                                     Reject
