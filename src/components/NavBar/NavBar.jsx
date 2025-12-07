@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import useAuth from '../../hooks/useAuth'; 
+import useRole from '../../hooks/useRole'; 
 
 const NavBar = () => {
-    const user = null; 
-    const role = 'hr'; 
+   
+    const { user, logOut } = useAuth(); 
+    const [role] = useRole(); 
+    const navigate = useNavigate();
     
     const [theme, setTheme] = useState('light');
 
@@ -22,12 +26,19 @@ const NavBar = () => {
         document.documentElement.setAttribute('data-theme', newTheme);
     };
 
+    const handleLogOut = () => {
+        logOut()
+            .then(() => navigate('/login'))
+            .catch(err => console.log(err));
+    }
+
     const getLinkClass = ({ isActive }) =>
         `flex items-center gap-2 m-2 hover:border-b-2 hover:border-sky-500 font-medium ${isActive ? 'border-b-2 border-sky-500 text-sky-500' : ''}`;
 
     const navLinks = <>
         <li><NavLink to="/" className={getLinkClass}><span className='text-gray-500 '>Home</span></NavLink></li>
         
+       
         {!user && (
             <>
                 <li><NavLink to="/join-employee" className={getLinkClass}><span className='text-gray-500 '>Join as Employee</span></NavLink></li>
@@ -35,6 +46,7 @@ const NavBar = () => {
             </>
         )}
 
+        
         {user && role === 'hr' && (
             <>
                 <li><NavLink to="/asset-list" className={getLinkClass}>Asset List</NavLink></li>
@@ -45,6 +57,7 @@ const NavBar = () => {
             </>
         )}
 
+        
         {user && role === 'employee' && (
             <>
                 <li><NavLink to="/my-assets" className={getLinkClass}>My Assets</NavLink></li>
@@ -75,7 +88,7 @@ const NavBar = () => {
                                 </>
                             ) : (
                                 <li className="mt-2">
-                                    <button className="btn btn-outline btn-error btn-sm w-full">LogOut</button>
+                                    <button onClick={handleLogOut} className="btn btn-outline btn-error btn-sm w-full">LogOut</button>
                                 </li>
                             )}
                         </ul>
@@ -123,6 +136,7 @@ const NavBar = () => {
                                 </div>
                             </div>
                             <button 
+                                onClick={handleLogOut}
                                 className="btn bg-sky-600 hover:bg-sky-700 sm:btn-sm md:btn-md text-white border-none"
                             >
                                 LogOut
