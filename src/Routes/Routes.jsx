@@ -7,6 +7,7 @@ import Login from "../pages/Login/Login";
 import JoinEmployee from "../pages/Register/JoinEmployee";
 import JoinHR from "../pages/Register/JoinHR";
 import AssetList from "../pages/HR/AssetList";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
     {
@@ -32,7 +33,7 @@ export const router = createBrowserRouter([
             },
             {
               path: "/asset-list",
-              element: <AssetList/>,
+              element: <PrivateRoute><AssetList /></PrivateRoute>,
             },
         ],
     },
