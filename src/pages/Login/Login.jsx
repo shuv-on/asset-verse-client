@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import useAuth from '../../hooks/useAuth';
+import useAxiosPublic from '../../hooks/useAxiosPublic';
 
 const Login = () => {
     const { signIn, googleSignIn } = useAuth();
+    const axiosPublic = useAxiosPublic();
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
+
+    const [loginRole, setLoginRole] = useState('employee');
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -25,7 +29,21 @@ const Login = () => {
 
     const handleGoogleLogin = async () => {
         try {
-            await googleSignIn();
+            const result = await googleSignIn();
+            
+           
+            const userInfo = {
+                email: result.user?.email,
+                name: result.user?.displayName,
+                role: loginRole, 
+                status: 'verified',
+                companyName: "",
+                companyLogo: ""
+            }
+
+            
+            await axiosPublic.post('/users', userInfo);
+            
             navigate(from, { replace: true });
         } catch (error) {
             console.log(error);
@@ -43,28 +61,15 @@ const Login = () => {
                         <label className="label">
                             <span className="label-text font-semibold text-gray-700">Email</span>
                         </label>
-                        <input 
-                            type="email" 
-                            name="email" 
-                            placeholder="your.email@example.com" 
-                            className="input input-bordered w-full focus:border-sky-500 focus:ring-2 focus:ring-sky-200" 
-                            required 
-                        />
+                        <input type="email" name="email" placeholder="your.email@example.com" className="input input-bordered w-full focus:border-sky-500 focus:ring-2 focus:ring-sky-200" required />
                     </div>
 
                     <div className="form-control w-full mt-4">
-                        
                         <label className="label flex justify-between items-center">
                             <span className="label-text font-semibold text-gray-700">Password</span>
                             <a href="#" className="label-text-alt link link-hover text-sky-600 font-medium">Forgot password?</a>
                         </label>
-                        <input 
-                            type="password" 
-                            name="password" 
-                            placeholder="*******" 
-                            className="input input-bordered w-full focus:border-sky-500 focus:ring-2 focus:ring-sky-200" 
-                            required 
-                        />
+                        <input type="password" name="password" placeholder="*******" className="input input-bordered w-full focus:border-sky-500 focus:ring-2 focus:ring-sky-200" required />
                     </div>
 
                     <div className="form-control mt-8">
@@ -73,6 +78,36 @@ const Login = () => {
 
                     <div className="divider my-6 text-gray-500 font-medium">OR</div>
                    
+                    {/* Google role selection */}
+                    <div className='p-4 bg-gray-100 rounded-lg mb-4'>
+                        <p className='text-center text-sm font-semibold text-gray-600 mb-2'>Select Role for Google Login:</p>
+                        <div className="flex justify-center gap-6">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    name="role" 
+                                    value="employee" 
+                                    className="radio radio-info" 
+                                    checked={loginRole === 'employee'}
+                                    onChange={() => setLoginRole('employee')}
+                                />
+                                <span className="font-medium text-gray-700">Employee</span>
+                            </label>
+                            
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input 
+                                    type="radio" 
+                                    name="role" 
+                                    value="hr" 
+                                    className="radio radio-info" 
+                                    checked={loginRole === 'hr'}
+                                    onChange={() => setLoginRole('hr')}
+                                />
+                                <span className="font-medium text-gray-700">HR Manager</span>
+                            </label>
+                        </div>
+                    </div>
+
                     <button 
                         onClick={handleGoogleLogin}
                         type="button" 
@@ -82,7 +117,6 @@ const Login = () => {
                         Sign in with Google
                     </button>
 
-                    
                     <p className="text-center mt-8 text-gray-600">
                         Don't have an account?{' '}
                         <span className="font-bold text-sky-700">
