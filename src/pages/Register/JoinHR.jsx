@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import useAxiosPublic from '../../hooks/useAxiosPublic';
 
-
 const JoinHR = () => {
     const { createUser, updateUserProfile } = useAuth();
     const axiosPublic = useAxiosPublic();
@@ -156,7 +155,7 @@ const JoinHR = () => {
 
                     {/* Submit Button */}
                     <div className="form-control mt-8">
-                        <button className="btn bg-sky-600 hover:bg-sky-800 text-white text-lg font-bold w-full border-none">
+                        <button type="submit" className="btn bg-sky-600 hover:bg-sky-800 text-white text-lg font-bold w-full border-none">
                             Register
                         </button>
                     </div>

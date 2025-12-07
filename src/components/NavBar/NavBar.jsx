@@ -8,6 +8,9 @@ const NavBar = () => {
     const { user, logOut } = useAuth(); 
     const [role] = useRole(); 
     const navigate = useNavigate();
+
+    console.log("User:", user);
+    console.log("Role:", role);
     
     const [theme, setTheme] = useState('light');
 
@@ -49,21 +52,21 @@ const NavBar = () => {
         
         {user && role === 'hr' && (
             <>
-                <li><NavLink to="/asset-list" className={getLinkClass}>Asset List</NavLink></li>
-                <li><NavLink to="/add-asset" className={getLinkClass}>Add Asset</NavLink></li>
-                <li><NavLink to="/all-requests" className={getLinkClass}>All Requests</NavLink></li>
-                <li><NavLink to="/my-employee-list" className={getLinkClass}>My Employees</NavLink></li>
-                <li><NavLink to="/profile" className={getLinkClass}>Profile</NavLink></li>
+                <li><NavLink to="/asset-list" className={getLinkClass}><span className='text-gray-500 '>Asset List</span> </NavLink></li>
+                <li><NavLink to="/add-asset" className={getLinkClass}> <span className='text-gray-500 '>Add Asset</span> </NavLink></li>
+                <li><NavLink to="/all-requests" className={getLinkClass}><span className='text-gray-500 '>All Requests</span></NavLink></li>
+                <li><NavLink to="/my-employee-list" className={getLinkClass}><span className='text-gray-500 '>My Employees</span></NavLink></li>
+                <li><NavLink to="/profile" className={getLinkClass}><span className='text-gray-500 '>Profile</span></NavLink></li>
             </>
         )}
 
         
         {user && role === 'employee' && (
             <>
-                <li><NavLink to="/my-assets" className={getLinkClass}>My Assets</NavLink></li>
-                <li><NavLink to="/my-team" className={getLinkClass}>My Team</NavLink></li>
-                <li><NavLink to="/request-asset" className={getLinkClass}>Request Asset</NavLink></li>
-                <li><NavLink to="/profile" className={getLinkClass}>Profile</NavLink></li>
+                <li><NavLink to="/my-assets" className={getLinkClass}><span className='text-gray-500 '>My Assets</span></NavLink></li>
+                <li><NavLink to="/my-team" className={getLinkClass}><span className='text-gray-500 '>My Team</span></NavLink></li>
+                <li><NavLink to="/request-asset" className={getLinkClass}><span className='text-gray-500 '>Request Asset</span></NavLink></li>
+                <li><NavLink to="/profile" className={getLinkClass}><span className='text-gray-500 '>Profile</span></NavLink></li>
             </>
         )}
     </>;
