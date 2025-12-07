@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import useAuth from '../../hooks/useAuth';
 import useAxiosPublic from '../../hooks/useAxiosPublic';
+import toast from 'react-hot-toast';
 
 const Login = () => {
     const { signIn, googleSignIn } = useAuth();
@@ -22,9 +23,11 @@ const Login = () => {
         
         try {
             await signIn(email, password);
+            toast.success('Login Successful!');
             navigate(from, { replace: true });
         } catch (error) {
             console.log(error);
+            toast.error(error.message);
         }
     };
 
@@ -55,12 +58,13 @@ const Login = () => {
             
             const { data } = await axiosPublic.post('/users', userInfo);
             console.log("Server Response:", data);
-            
+            toast.success('Google Login Successful!');
            
             navigate(from, { replace: true });
 
         } catch (error) {
             console.log("Google Login Error:", error);
+            toast.error(error.message);
         }
     };
 

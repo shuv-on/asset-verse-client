@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import useAxiosPublic from '../../hooks/useAxiosPublic';
+import toast from 'react-hot-toast';
 
 const JoinHR = () => {
     const { createUser, updateUserProfile } = useAuth();
@@ -39,11 +40,13 @@ const JoinHR = () => {
             const { data } = await axiosPublic.post('/users', hrInfo);
             
             if (data.insertedId) {
+                toast.success('Registration Successful!');
                 navigate('/');
             }
 
         } catch (error) {
             console.log(error);
+            toast.error(error.message);
         }
     };
 
