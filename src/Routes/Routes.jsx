@@ -15,6 +15,7 @@ import AllRequests from "../pages/HR/AllRequests";
 import MyAssets from "../pages/Employee/MyAsset";
 import MyEmployeeList from "../pages/HR/MyEmployeeList";
 import Subscription from "../pages/HR/Subscription";
+import Payment from "../pages/HR/Payment";
 
 export const router = createBrowserRouter([
     {
@@ -70,6 +71,11 @@ export const router = createBrowserRouter([
               path: "/subscription",
               element: <PrivateRoute><Subscription/></PrivateRoute>
             },
+            {
+              path: "/payment",
+              element: <PrivateRoute><Payment/></PrivateRoute>
+            },
+
         ],
     },
 ]);
