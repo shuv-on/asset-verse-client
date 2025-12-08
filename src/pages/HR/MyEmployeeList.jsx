@@ -4,7 +4,7 @@ import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { useQuery } from '@tanstack/react-query';
 import { FaUserTie } from "react-icons/fa";
 import Swal from 'sweetalert2'; 
-import toast from 'react-hot-toast';
+import toast from 'react-hot-toast'; 
 
 const MyEmployeeList = () => {
     const { user } = useAuth();
@@ -31,7 +31,7 @@ const MyEmployeeList = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                   
+                    
                     const res = await axiosSecure.patch(`/users/remove/${id}`, { hrEmail: user.email });
                     
                     if (res.data.modifiedCount > 0) {
@@ -71,7 +71,7 @@ const MyEmployeeList = () => {
                                     <td>
                                         <div className="avatar">
                                             <div className="mask mask-squircle w-12 h-12">
-                                                <img src={emp.photoURL} />
+                                                <img src={emp.photoURL || "https://i.ibb.co/37hjkY0/user.png"} />
                                             </div>
                                         </div>
                                     </td>
