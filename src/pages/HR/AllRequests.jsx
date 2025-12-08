@@ -3,10 +3,13 @@ import useAuth from '../../hooks/useAuth';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const AllRequests = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
+    const navigate = useNavigate();
 
     const { data: requests = [], refetch, isLoading } = useQuery({
         queryKey: ['requests', user?.email],
@@ -18,27 +21,44 @@ const AllRequests = () => {
 
     
     const handleStatus = async (id, status, req) => {
-        try {
-            const updateInfo = { 
-                status, 
-                assetId: req.assetId,
-                requesterEmail: req.requesterEmail, 
-                hrEmail: user.email,               
-                hrName: user.displayName           
-            };
+            try {
+                const updateInfo = { 
+                    status, 
+                    assetId: req.assetId,
+                    requesterEmail: req.requesterEmail, 
+                    hrEmail: user.email 
+                };
+    
+                const { data } = await axiosSecure.patch(`/requests/${id}`, updateInfo);
+              
+                if (data.message === 'limit_reached') {
+                    Swal.fire({
+                        title: "Package Limit Reached!",
+                        text: "You have reached your 5 employees limit. Please upgrade your package to approve more requests.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Upgrade Now"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            navigate('/subscription'); 
+                        }
+                    });
+                    return; 
+                }
+    
+               
+                if (data.modifiedCount > 0) {
+                    toast.success(`Request ${status} successfully!`);
+                    refetch();
+                }
 
-            const { data } = await axiosSecure.patch(`/requests/${id}`, updateInfo);
-            
-            if (data.modifiedCount > 0) {
-                toast.success(`Request ${status} successfully!`);
-                refetch();
+            } catch (error) {
+                console.error(error);
+                toast.error('Action failed');
             }
-        } catch (error) {
-            console.error(error);
-            toast.error('Action failed');
-        }
-    };
-
+        };
 
     if (isLoading) return <div className="text-center mt-20"><span className="loading loading-spinner loading-lg"></span></div>;
 
