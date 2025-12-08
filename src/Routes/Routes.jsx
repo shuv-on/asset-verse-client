@@ -17,6 +17,7 @@ import MyEmployeeList from "../pages/HR/MyEmployeeList";
 import Subscription from "../pages/HR/Subscription";
 import Payment from "../pages/HR/Payment";
 import Profile from "../components/Profile/Profile";
+import MyTeam from "../pages/Employee/MyTeam";
 
 export const router = createBrowserRouter([
     {
@@ -79,7 +80,12 @@ export const router = createBrowserRouter([
             {
               path: "/profile",
               element: <PrivateRoute><Profile/></PrivateRoute>
-            }
+            },
+            {
+              path: "/my-team",
+              element: <PrivateRoute><MyTeam/></PrivateRoute>
+            },
+            
 
         ],
     },
