@@ -14,6 +14,7 @@ import RequestAsset from "../pages/Employee/RequestAsset";
 import AllRequests from "../pages/HR/AllRequests";
 import MyAssets from "../pages/Employee/MyAsset";
 import MyEmployeeList from "../pages/HR/MyEmployeeList";
+import Subscription from "../pages/HR/Subscription";
 
 export const router = createBrowserRouter([
     {
@@ -64,6 +65,10 @@ export const router = createBrowserRouter([
             {
               path: "/my-employee-list",
               element: <PrivateRoute><MyEmployeeList/></PrivateRoute>
+            },
+            {
+              path: "/subscription",
+              element: <PrivateRoute><Subscription/></PrivateRoute>
             },
         ],
     },
