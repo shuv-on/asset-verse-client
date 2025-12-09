@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useAuth from '../../hooks/useAuth';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { useQuery } from '@tanstack/react-query';
@@ -8,13 +8,34 @@ const MyTeam = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
 
-    const { data: teamMembers = [], isLoading } = useQuery({
-        queryKey: ['my-team', user?.email],
+    const [currentPage, setCurrentPage] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['my-team', user?.email, currentPage, itemsPerPage],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/my-team?email=${user.email}`);
+            const res = await axiosSecure.get(`/my-team?email=${user.email}&page=${currentPage}&size=${itemsPerPage}`);
             return res.data;
-        }
+        },
+        placeholderData: (previousData) => previousData,
     });
+
+    const teamMembers = data?.result || [];
+    const count = data?.count || 0;
+    const numberOfPages = Math.ceil(count / itemsPerPage);
+    const pages = [...Array(numberOfPages).keys()];
+
+    const handlePrevPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
+
+    const handleNextPage = () => {
+        if (currentPage < numberOfPages - 1) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
 
     if (isLoading) return <div className="text-center mt-20"><span className="loading loading-spinner loading-lg text-sky-600"></span></div>;
 
@@ -36,7 +57,7 @@ const MyTeam = () => {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 {teamMembers.map(member => (
                     <div key={member._id} className="card bg-base-100 shadow-xl border border-gray-100 hover:shadow-2xl transition-all">
                         <div className="card-body flex flex-row items-center gap-4">
@@ -65,6 +86,34 @@ const MyTeam = () => {
                     </div>
                 ))}
             </div>
+
+            {count > 0 && (
+                <div className='flex justify-center items-center gap-2 mt-8 mb-12'>
+                    <button onClick={handlePrevPage} className="btn btn-sm btn-outline" disabled={currentPage === 0}>Prev</button>
+                    
+                    {pages.map(page => (
+                        <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`btn btn-sm ${currentPage === page ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+                        >
+                            {page + 1}
+                        </button>
+                    ))}
+
+                    <button onClick={handleNextPage} className="btn btn-sm btn-outline" disabled={currentPage === numberOfPages - 1}>Next</button>
+                    
+                    <select value={itemsPerPage} onChange={(e) => {
+                        setItemsPerPage(parseInt(e.target.value));
+                        setCurrentPage(0);
+                    }} className="select select-bordered select-sm ml-4">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            )}
         </div>
     );
 };

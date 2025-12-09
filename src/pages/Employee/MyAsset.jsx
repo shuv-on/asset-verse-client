@@ -10,14 +10,21 @@ const MyAssets = () => {
     const axiosSecure = useAxiosSecure();
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('');
+    const [currentPage, setCurrentPage] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
-    const { data: myRequests = [], refetch, isLoading } = useQuery({
-        queryKey: ['my-requests', user?.email],
+    const { data, refetch, isLoading } = useQuery({
+        queryKey: ['my-requests', user?.email, currentPage, itemsPerPage],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/my-requested-assets?email=${user.email}`);
+            const res = await axiosSecure.get(`/my-requested-assets?email=${user.email}&page=${currentPage}&size=${itemsPerPage}`);
             return res.data;
         }
     });
+
+    const myRequests = data?.result || [];
+    const count = data?.count || 0;
+    const numberOfPages = Math.ceil(count / itemsPerPage);
+    const pages = [...Array(numberOfPages).keys()];
 
    
     const filteredRequests = myRequests.filter(req => {
@@ -50,6 +57,18 @@ const MyAssets = () => {
             }
         });
     };
+
+    const handlePrevPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
+
+    const handleNextPage = () => {
+        if (currentPage < numberOfPages - 1) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
 
     if (isLoading) return <div className="text-center mt-20"><span className="loading loading-spinner loading-lg"></span></div>;
 
@@ -94,7 +113,7 @@ const MyAssets = () => {
                         {filteredRequests.length > 0 ? (
                             filteredRequests.map((req, index) => (
                                 <tr key={req._id} className="hover">
-                                    <th>{index + 1}</th>
+                                    <th>{(currentPage * itemsPerPage) + index + 1}</th>
                                     <td className="font-semibold">{req.productName}</td>
                                     <td>{req.productType}</td>
                                     <td>{req.requestDate}</td>
@@ -135,6 +154,34 @@ const MyAssets = () => {
                     </tbody>
                 </table>
             </div>
+
+            {count > 0 && (
+                <div className='flex justify-center items-center gap-2 mt-8 mb-12'>
+                    <button onClick={handlePrevPage} className="btn btn-sm btn-outline" disabled={currentPage === 0}>Prev</button>
+                    
+                    {pages.map(page => (
+                        <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`btn btn-sm ${currentPage === page ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+                        >
+                            {page + 1}
+                        </button>
+                    ))}
+
+                    <button onClick={handleNextPage} className="btn btn-sm btn-outline" disabled={currentPage === numberOfPages - 1}>Next</button>
+                    
+                    <select value={itemsPerPage} onChange={(e) => {
+                        setItemsPerPage(parseInt(e.target.value));
+                        setCurrentPage(0);
+                    }} className="select select-bordered select-sm ml-4">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            )}
         </div>
     );
 };

@@ -4,11 +4,25 @@ import { FaCheckCircle, FaUsers, FaBoxOpen, FaArrowRight } from "react-icons/fa"
 import useAuth from '../../hooks/useAuth';
 import useRole from '../../hooks/useRole';
 import toast from 'react-hot-toast';
+import HrHome from './HrHome';
+import EmployeeHome from './EmployeeHome';
 
 const Home = () => {
-    const { user } = useAuth();
-    const [role] = useRole();
+    const { user, loading } = useAuth();
+    const [role, isRoleLoading] = useRole();
     const navigate = useNavigate();
+
+    if (loading || (user && isRoleLoading)) {
+        return <div className="flex justify-center mt-20"><span className="loading loading-spinner loading-lg"></span></div>;
+    }
+
+    if (user && role === 'hr') {
+        return <HrHome />;
+    }
+
+    if (user && role === 'employee') {
+        return <EmployeeHome />;
+    }
 
     const handleBuyPackage = (price, limit) => {
         if (!user) {

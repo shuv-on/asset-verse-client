@@ -11,16 +11,23 @@ const AssetList = () => {
     
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('');
+    const [currentPage, setCurrentPage] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
-    const { data: assets = [], refetch, isLoading } = useQuery({
-        queryKey: ['assets', user?.email, search, filter],
+    const { data, refetch, isLoading } = useQuery({
+        queryKey: ['assets', user?.email, search, filter, currentPage, itemsPerPage],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/assets?email=${user.email}&search=${search}&filter=${filter}`);
+            const res = await axiosSecure.get(`/assets?email=${user.email}&search=${search}&filter=${filter}&page=${currentPage}&size=${itemsPerPage}`);
             return res.data;
         },
        
         placeholderData: (previousData) => previousData, 
     });
+
+    const assets = data?.result || [];
+    const count = data?.count || 0;
+    const numberOfPages = Math.ceil(count / itemsPerPage);
+    const pages = [...Array(numberOfPages).keys()];
 
     const handleDelete = (id) => {
         Swal.fire({
@@ -42,6 +49,18 @@ const AssetList = () => {
         });
     };
 
+    const handlePrevPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
+
+    const handleNextPage = () => {
+        if (currentPage < numberOfPages - 1) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
+
     
     if (isLoading) return <div className="text-center mt-20"><span className="loading loading-spinner loading-lg"></span></div>;
 
@@ -58,7 +77,10 @@ const AssetList = () => {
                         placeholder="Search by Product Name..." 
                         className="input input-bordered w-full"
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            setCurrentPage(0);
+                        }}
                       
                     />
                 </div>
@@ -67,7 +89,10 @@ const AssetList = () => {
                 <div className="form-control w-full md:w-1/4">
                     <select 
                         className="select select-bordered w-full"
-                        onChange={(e) => setFilter(e.target.value)}
+                        onChange={(e) => {
+                            setFilter(e.target.value);
+                            setCurrentPage(0);
+                        }}
                         value={filter}
                     >
                         <option value="">All Types</option>
@@ -78,7 +103,7 @@ const AssetList = () => {
             </div>
 
             {/* List table */}
-            <div className="overflow-x-auto bg-base-100 shadow-xl rounded-lg">
+            <div className="overflow-x-auto bg-base-100 shadow-xl rounded-lg mb-8">
                 <table className="table w-full">
                     <thead className="bg-sky-100 text-sky-800 text-lg">
                         <tr>
@@ -95,7 +120,7 @@ const AssetList = () => {
                         {assets.length > 0 ? (
                             assets.map((asset, index) => (
                                 <tr key={asset._id} className="hover">
-                                    <th>{index + 1}</th>
+                                    <th>{(currentPage * itemsPerPage) + index + 1}</th>
                                     <td className="font-semibold">{asset.productName}</td>
                                     <td>
                                         <div className={`badge ${asset.productType === 'Returnable' ? 'badge-warning' : 'badge-success'} badge-outline`}>
@@ -129,6 +154,34 @@ const AssetList = () => {
                     </tbody>
                 </table>
             </div>
+
+            {count > 0 && (
+                <div className='flex justify-center items-center gap-2 mt-8 mb-12'>
+                    <button onClick={handlePrevPage} className="btn btn-sm btn-outline" disabled={currentPage === 0}>Prev</button>
+                    
+                    {pages.map(page => (
+                        <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`btn btn-sm ${currentPage === page ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+                        >
+                            {page + 1}
+                        </button>
+                    ))}
+
+                    <button onClick={handleNextPage} className="btn btn-sm btn-outline" disabled={currentPage === numberOfPages - 1}>Next</button>
+                    
+                    <select value={itemsPerPage} onChange={(e) => {
+                        setItemsPerPage(parseInt(e.target.value));
+                        setCurrentPage(0);
+                    }} className="select select-bordered select-sm ml-4">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            )}
         </div>
     );
 };
