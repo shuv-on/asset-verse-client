@@ -20,14 +20,12 @@ const AssetList = () => {
             const res = await axiosSecure.get(`/assets?email=${user.email}&search=${search}&filter=${filter}&page=${currentPage}&size=${itemsPerPage}`);
             return res.data;
         },
-       
         placeholderData: (previousData) => previousData, 
     });
 
     const assets = data?.result || [];
     const count = data?.count || 0;
     const numberOfPages = Math.ceil(count / itemsPerPage);
-    const pages = [...Array(numberOfPages).keys()];
 
     const handleDelete = (id) => {
         Swal.fire({
@@ -61,7 +59,6 @@ const AssetList = () => {
         }
     }
 
-    
     if (isLoading) return <div className="text-center mt-20"><span className="loading loading-spinner loading-lg"></span></div>;
 
     return (
@@ -81,7 +78,6 @@ const AssetList = () => {
                             setSearch(e.target.value);
                             setCurrentPage(0);
                         }}
-                      
                     />
                 </div>
 
@@ -146,7 +142,6 @@ const AssetList = () => {
                         ) : (
                             <tr>
                                 <td colSpan="6" className="text-center py-4 text-gray-500">
-                               
                                     {search ? "No matching assets found." : "No assets added yet."}
                                 </td>
                             </tr>
@@ -155,19 +150,51 @@ const AssetList = () => {
                 </table>
             </div>
 
+       
             {count > 0 && (
-                <div className='flex justify-center items-center gap-2 mt-8 mb-12'>
+                <div className='flex justify-center items-center gap-2 mt-8 mb-12 flex-wrap'>
                     <button onClick={handlePrevPage} className="btn btn-sm btn-outline" disabled={currentPage === 0}>Prev</button>
-                    
-                    {pages.map(page => (
-                        <button
-                            key={page}
-                            onClick={() => setCurrentPage(page)}
-                            className={`btn btn-sm ${currentPage === page ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+                   
+                    <button 
+                        onClick={() => setCurrentPage(0)} 
+                        className={`btn btn-sm ${currentPage === 0 ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+                    >
+                        1
+                    </button>
+
+                    {/* Left dots */}
+                    {currentPage > 2 && <span className="btn btn-sm btn-disabled bg-transparent border-none text-black">...</span>}
+
+                    {[...Array(numberOfPages).keys()].map(page => {
+                        if (page === 0 || page === numberOfPages - 1) return null;
+                        
+                        // Show current, prev, next
+                        if (page >= currentPage - 1 && page <= currentPage + 1) {
+                            return (
+                                <button
+                                    key={page}
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`btn btn-sm ${currentPage === page ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+                                >
+                                    {page + 1}
+                                </button>
+                            );
+                        }
+                        return null;
+                    })}
+
+                    {/* Right dots */}
+                    {currentPage < numberOfPages - 3 && <span className="btn btn-sm btn-disabled bg-transparent border-none text-black">...</span>}
+
+                    {/* Last page */}
+                    {numberOfPages > 1 && (
+                        <button 
+                            onClick={() => setCurrentPage(numberOfPages - 1)} 
+                            className={`btn btn-sm ${currentPage === numberOfPages - 1 ? 'bg-sky-600 text-white' : 'btn-outline'}`}
                         >
-                            {page + 1}
+                            {numberOfPages}
                         </button>
-                    ))}
+                    )}
 
                     <button onClick={handleNextPage} className="btn btn-sm btn-outline" disabled={currentPage === numberOfPages - 1}>Next</button>
                     
