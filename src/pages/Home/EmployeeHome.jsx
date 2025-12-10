@@ -2,7 +2,7 @@ import React from 'react';
 import useAuth from '../../hooks/useAuth';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { useQuery } from '@tanstack/react-query';
-import { FaClock, FaCalendarAlt } from "react-icons/fa";
+import { FaClock, FaCalendarAlt, FaArrowRight } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 
 const EmployeeHome = () => {
@@ -28,17 +28,22 @@ const EmployeeHome = () => {
 
     return (
         <div className="py-10 px-4 max-w-7xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-500 mb-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-8">
                 Hello, <span className="text-sky-600">{user?.displayName}</span>
             </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 
-                {/* Employye Pending rqst */}
+                {/* My Pending rqst */}
                 <div className="card bg-base-100 shadow-xl border-t-4 border-yellow-500">
                     <div className="card-body">
-                        <h2 className="card-title text-yellow-600 flex items-center gap-2">
-                            <FaClock /> My Pending Requests
+                        <h2 className="card-title text-yellow-600 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <FaClock /> My Pending Requests
+                            </div>
+                            <button onClick={() => navigate('/my-assets')} className="btn btn-xs btn-ghost text-sky-600">
+                                View All <FaArrowRight />
+                            </button>
                         </h2>
                         <div className="overflow-x-auto mt-4">
                             <table className="table w-full">
@@ -67,11 +72,16 @@ const EmployeeHome = () => {
                     </div>
                 </div>
 
-                {/* Employee Monthly rqst */}
+                {/* My Monthly rqst */}
                 <div className="card bg-base-100 shadow-xl border-t-4 border-purple-500">
                     <div className="card-body">
-                        <h2 className="card-title text-purple-600 flex items-center gap-2">
-                            <FaCalendarAlt /> Requests This Month
+                        <h2 className="card-title text-purple-600 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <FaCalendarAlt /> Requests This Month
+                            </div>
+                            <button onClick={() => navigate('/my-assets')} className="btn btn-xs btn-ghost text-sky-600">
+                                View All <FaArrowRight />
+                            </button>
                         </h2>
                         <div className="overflow-x-auto mt-4">
                              <table className="table w-full">
@@ -96,9 +106,6 @@ const EmployeeHome = () => {
                                     )}
                                 </tbody>
                             </table>
-                        </div>
-                        <div className="card-actions justify-end mt-4">
-                            <button onClick={() => navigate('/my-assets')} className="btn btn-sm btn-outline btn-info">View All History</button>
                         </div>
                     </div>
                 </div>

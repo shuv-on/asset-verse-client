@@ -28,47 +28,45 @@ const AllRequests = () => {
     const numberOfPages = Math.ceil(count / itemsPerPage);
     const pages = [...Array(numberOfPages).keys()];
 
-    
     const handleStatus = async (id, status, req) => {
-            try {
-                const updateInfo = { 
-                    status, 
-                    assetId: req.assetId,
-                    requesterEmail: req.requesterEmail, 
-                    hrEmail: user.email 
-                };
-    
-                const { data } = await axiosSecure.patch(`/requests/${id}`, updateInfo);
-              
-                if (data.message === 'limit_reached') {
-                    Swal.fire({
-                        title: "Package Limit Reached!",
-                        text: "You have reached your 5 employees limit. Please upgrade your package to approve more requests.",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#3085d6",
-                        cancelButtonColor: "#d33",
-                        confirmButtonText: "Upgrade Now"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            navigate('/subscription'); 
-                        }
-                    });
-                    return; 
-                }
-    
-               
-                if (data.modifiedCount > 0) {
-                    toast.success(`Request ${status} successfully!`);
-                    refetch();
-                }
+        try {
+            const updateInfo = { 
+                status, 
+                assetId: req.assetId,
+                requesterEmail: req.requesterEmail, 
+                hrEmail: user.email 
+            };
 
-            } catch (error) {
-                console.error(error);
-                toast.error('Action failed');
+            const { data } = await axiosSecure.patch(`/requests/${id}`, updateInfo);
+          
+            if (data.message === 'limit_reached') {
+                Swal.fire({
+                    title: "Package Limit Reached!",
+                    text: "You have reached your 5 employees limit. Please upgrade your package to approve more requests.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Upgrade Now"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate('/subscription'); 
+                    }
+                });
+                return; 
             }
-        };
-    
+
+            if (data.modifiedCount > 0) {
+                toast.success(`Request ${status} successfully!`);
+                refetch();
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast.error('Action failed');
+        }
+    };
+
     const handlePrevPage = () => {
         if (currentPage > 0) {
             setCurrentPage(currentPage - 1);
@@ -153,18 +151,48 @@ const AllRequests = () => {
             </div>
 
             {count > 0 && (
-                <div className='flex justify-center items-center gap-2 mt-8 mb-12'>
+                <div className='flex justify-center items-center gap-2 mt-8 mb-12 flex-wrap'>
                     <button onClick={handlePrevPage} className="btn btn-sm btn-outline" disabled={currentPage === 0}>Prev</button>
                     
-                    {pages.map(page => (
-                        <button
-                            key={page}
-                            onClick={() => setCurrentPage(page)}
-                            className={`btn btn-sm ${currentPage === page ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+         
+                    <button 
+                        onClick={() => setCurrentPage(0)} 
+                        className={`btn btn-sm ${currentPage === 0 ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+                    >
+                        1
+                    </button>
+
+                    {currentPage > 2 && <span className="btn btn-sm btn-disabled bg-transparent border-none text-black">...</span>}
+
+                    {/* Middle page */}
+                    {[...Array(numberOfPages).keys()].map(page => {
+                        if (page === 0 || page === numberOfPages - 1) return null; 
+                        
+                        if (page >= currentPage - 1 && page <= currentPage + 1) {
+                            return (
+                                <button
+                                    key={page}
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`btn btn-sm ${currentPage === page ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+                                >
+                                    {page + 1}
+                                </button>
+                            );
+                        }
+                        return null;
+                    })}
+
+                    {currentPage < numberOfPages - 3 && <span className="btn btn-sm btn-disabled bg-transparent border-none text-black">...</span>}
+
+                    {/* Last page */}
+                    {numberOfPages > 1 && (
+                        <button 
+                            onClick={() => setCurrentPage(numberOfPages - 1)} 
+                            className={`btn btn-sm ${currentPage === numberOfPages - 1 ? 'bg-sky-600 text-white' : 'btn-outline'}`}
                         >
-                            {page + 1}
+                            {numberOfPages}
                         </button>
-                    ))}
+                    )}
 
                     <button onClick={handleNextPage} className="btn btn-sm btn-outline" disabled={currentPage === numberOfPages - 1}>Next</button>
                     
@@ -175,6 +203,7 @@ const AllRequests = () => {
                         <option value="5">5</option>
                         <option value="10">10</option>
                         <option value="20">20</option>
+                        <option value="50">50</option>
                     </select>
                 </div>
             )}

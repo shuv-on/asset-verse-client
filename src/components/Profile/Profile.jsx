@@ -154,9 +154,10 @@ const Profile = () => {
                                 </label>
                                 <input 
                                     type="text" 
+                                    name='name'
                                     value={dbUser.companyName || "N/A"} 
                                     className="input input-bordered w-full bg-gray-200 text-gray-500 cursor-not-allowed" 
-                                    readOnly 
+                                    readOnly
                                 />
                             </div>
                         )}

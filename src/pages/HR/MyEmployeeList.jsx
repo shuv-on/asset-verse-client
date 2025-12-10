@@ -122,17 +122,46 @@ const MyEmployeeList = () => {
 
             {/* Pagination ctrl */}
             {count > 0 && (
-                <div className='flex justify-center items-center gap-2 mt-8 mb-12'>
+                <div className='flex justify-center items-center gap-2 mt-8 mb-12 flex-wrap'>
                     <button onClick={handlePrevPage} className="btn btn-sm btn-outline" disabled={currentPage === 0}>Prev</button>
-                    {pages.map(page => (
-                        <button
-                            key={page}
-                            onClick={() => setCurrentPage(page)}
-                            className={`btn btn-sm ${currentPage === page ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+                    
+                    <button 
+                        onClick={() => setCurrentPage(0)} 
+                        className={`btn btn-sm ${currentPage === 0 ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+                    >
+                        1
+                    </button>
+
+                    {currentPage > 2 && <span className="btn btn-sm btn-disabled bg-transparent border-none text-black">...</span>}
+
+                    {pages.map(page => {
+                        if (page === 0 || page === numberOfPages - 1) return null;
+                        
+                        if (page >= currentPage - 1 && page <= currentPage + 1) {
+                            return (
+                                <button
+                                    key={page}
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`btn btn-sm ${currentPage === page ? 'bg-sky-600 text-white' : 'btn-outline'}`}
+                                >
+                                    {page + 1}
+                                </button>
+                            );
+                        }
+                        return null;
+                    })}
+
+                    {currentPage < numberOfPages - 3 && <span className="btn btn-sm btn-disabled bg-transparent border-none text-black">...</span>}
+
+                    {numberOfPages > 1 && (
+                        <button 
+                            onClick={() => setCurrentPage(numberOfPages - 1)} 
+                            className={`btn btn-sm ${currentPage === numberOfPages - 1 ? 'bg-sky-600 text-white' : 'btn-outline'}`}
                         >
-                            {page + 1}
+                            {numberOfPages}
                         </button>
-                    ))}
+                    )}
+
                     <button onClick={handleNextPage} className="btn btn-sm btn-outline" disabled={currentPage === numberOfPages - 1}>Next</button>
                     
                     <select value={itemsPerPage} onChange={(e) => {
