@@ -32,6 +32,10 @@ const Profile = () => {
             updateDoc.dateOfBirth = form.dob.value;
         }
 
+        if (dbUser.role === 'hr' && form.companyName) {
+            updateDoc.companyName = form.companyName.value;
+        }
+
         try {
             await updateUserProfile(name, photo);
             const { data } = await axiosSecure.put(`/users/${user?.email}`, updateDoc);
@@ -154,10 +158,9 @@ const Profile = () => {
                                 </label>
                                 <input 
                                     type="text" 
-                                    name='name'
-                                    value={dbUser.companyName || "N/A"} 
-                                    className="input input-bordered w-full bg-gray-200 text-gray-500 cursor-not-allowed" 
-                                    readOnly
+                                    name='companyName'
+                                    defaultValue={dbUser.companyName} 
+                                    className="input input-bordered w-full focus:ring-2 text-gray-600 focus:ring-sky-500 focus:border-sky-500 transition-all bg-gray-200" 
                                 />
                             </div>
                         )}
