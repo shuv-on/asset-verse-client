@@ -1,16 +1,41 @@
-# React + Vite
+# AssetVerse - Client Side 🏢
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[AssetVerse](https://asset-verses.web.app) is a comprehensive corporate asset management web application. It helps HR Managers track company assets, manage employees, and handle asset requests efficiently. Employees can join the platform, request assets, and view their assigned items.
 
-Currently, two official plugins are available:
+## 🔗 Live Links
+- **Live Site:** [👉Click Here](https://asset-verses.web.app)
+- **Server Repository:** [👉Click Here](https://github.com/shuv-on/asset-verse-server)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Key Features
 
-## React Compiler
+### For HR Managers:
+- **Dashboard Overview** 
+- **Asset Management** 
+- **Request Handling** 
+- **Employee Management** 
+- **Payment Integration** 
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### For Employees:
+- **Asset Request** 
+- **My Assets** 
+- **Team View** 
+- **Profile Management** 
 
-## Expanding the ESLint configuration
+### General:
+- **Authentication** 
+- **Responsive Design** Fully responsive UI for Mobile, Tablet, and Desktop.
+- **PDF Print**
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Technologies & Packages Used:
+
+- **React:** For building the user interface.
+- **React Router DOM:** For handling navigation and routes.
+- **Firebase:** For authentication (Login, Register, Google Sign-in).
+- **Tailwind CSS & DaisyUI** 
+- **TanStack Query (React Query)** 
+- **Axios** 
+- **React Hook Form** 
+- **Recharts**
+- **Stripe (React Stripe JS)** 
+- **SweetAlert2 & React Hot Toast**
+- **React Icons**
