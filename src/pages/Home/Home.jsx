@@ -41,6 +41,7 @@ const Home = () => {
 
     return (
         <div>
+            
             {/*Banner Section */}
             <div className="hero min-h-[550px] bg-base-200">
                 <div className="hero-content flex-col lg:flex-row-reverse px-4 lg:px-12">

@@ -27,7 +27,7 @@ const MyAssets = () => {
     const myRequests = data?.result || [];
     const count = data?.count || 0;
     const numberOfPages = Math.ceil(count / itemsPerPage);
-   /*  const pages = [...Array(numberOfPages).keys()]; */
+   
 
 
     const handleCancel = (id) => {
@@ -94,6 +94,7 @@ const MyAssets = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            
             <h2 className="text-3xl font-bold text-center text-sky-700 mb-8">My Assets & Requests</h2>
 
             {/* Search & Filter */}
