@@ -82,7 +82,7 @@ const Profile = () => {
 
                 {/* User Info Header */}
                 <div className="pt-20 pb-6 text-center px-6">
-                    <h1 className="text-3xl font-bold text-gray-800">{dbUser.name}</h1>
+                    <h1 className="text-3xl font-bold text-sky-600">{dbUser.name}</h1>
                     <p className="text-gray-500 font-medium mt-1 flex justify-center items-center gap-2">
                         <FaEnvelope className="text-sky-600"/> {dbUser.email}
                     </p>
@@ -130,7 +130,7 @@ const Profile = () => {
                             <label className="label"><span className="label-text font-semibold text-gray-500">Full Name</span></label>
                             <div className="relative">
                                 <FaUser className="absolute left-3 top-3.5 text-sky-500"/>
-                                <input type="text" name="name" defaultValue={dbUser.name} className="input input-bordered w-full pl-10 focus:border-sky-500 bg-gray-50" required />
+                                <input type="text" name="name" defaultValue={dbUser.name} className="input input-bordered w-full pl-10 focus:border-sky-500 bg-gray-200 text-gray-500" required />
                             </div>
                         </div>
 
@@ -139,7 +139,7 @@ const Profile = () => {
                             <label className="label"><span className="label-text font-semibold text-gray-500">Profile Photo URL</span></label>
                             <div className="relative">
                                 <FaCamera className="absolute left-3 top-3.5 text-sky-500"/>
-                                <input type="url" name="photo" defaultValue={dbUser.photoURL} className="input input-bordered w-full pl-10 focus:border-sky-500 bg-gray-50" required />
+                                <input type="url" name="photo" defaultValue={dbUser.photoURL} className="input input-bordered w-full pl-10 focus:border-sky-500 bg-gray-200 text-gray-500" required />
                             </div>
                         </div>
 
@@ -149,7 +149,7 @@ const Profile = () => {
                                 <label className="label"><span className="label-text font-semibold text-gray-500">Date of Birth</span></label>
                                 <div className="relative">
                                     <FaBirthdayCake className="absolute left-3 top-3.5 text-sky-500"/>
-                                    <input type="date" name="dob" defaultValue={dbUser.dateOfBirth} className="input input-bordered w-full pl-10 focus:border-sky-500 bg-gray-50" />
+                                    <input type="date" name="dob" defaultValue={dbUser.dateOfBirth} className="input input-bordered w-full pl-10 focus:border-sky-500 bg-gray-200 text-gray-500" />
                                 </div>
                             </div>
                         )}
@@ -160,7 +160,7 @@ const Profile = () => {
                                 <label className="label"><span className="label-text font-semibold text-gray-500">Company Name</span></label>
                                 <div className="relative">
                                     <FaBuilding className="absolute left-3 top-3.5 text-sky-500"/>
-                                    <input type="text" name='companyName' defaultValue={dbUser.companyName} className="input input-bordered w-full pl-10 focus:border-sky-500 bg-gray-50" required />
+                                    <input type="text" name='companyName' defaultValue={dbUser.companyName} className="input input-bordered w-full pl-10 focus:border-sky-500 bg-gray-200 text-gray-500" required />
                                 </div>
                             </div>
                         )}
