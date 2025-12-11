@@ -3,7 +3,8 @@ import useAuth from '../../hooks/useAuth';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import { useQuery } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
-import { FaTrashAlt, FaFilePdf } from "react-icons/fa"; 
+import { FaTrashAlt, FaFilePdf, FaUndo } from "react-icons/fa"; 
+import toast from 'react-hot-toast';
 
 const MyAssets = () => {
     const { user } = useAuth();
@@ -16,6 +17,7 @@ const MyAssets = () => {
     const { data, refetch, isLoading } = useQuery({
         queryKey: ['my-requests', user?.email, search, filter, currentPage, itemsPerPage],
         queryFn: async () => {
+          
             const res = await axiosSecure.get(`/my-requested-assets?email=${user.email}&search=${search}&filter=${filter}&page=${currentPage}&size=${itemsPerPage}&sort=dsc`);
             return res.data;
         },
@@ -25,9 +27,9 @@ const MyAssets = () => {
     const myRequests = data?.result || [];
     const count = data?.count || 0;
     const numberOfPages = Math.ceil(count / itemsPerPage);
-    const pages = [...Array(numberOfPages).keys()];
+   /*  const pages = [...Array(numberOfPages).keys()]; */
 
-   
+
     const handleCancel = (id) => {
         Swal.fire({
             title: "Are you sure?",
@@ -52,17 +54,41 @@ const MyAssets = () => {
         });
     };
 
-    const handlePrevPage = () => {
-        if (currentPage > 0) {
-            setCurrentPage(currentPage - 1);
-        }
-    }
 
-    const handleNextPage = () => {
-        if (currentPage < numberOfPages - 1) {
-            setCurrentPage(currentPage + 1);
-        }
-    }
+    const handleReturn = (id, assetId) => {
+        Swal.fire({
+            title: "Return Asset?",
+            text: "Once returned, you cannot undo this action. Stock will be increased.",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Return it!"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+               
+                    const res = await axiosSecure.patch(`/requests/${id}`, { 
+                        status: 'returned',
+                        assetId: assetId 
+                    });
+                    if (res.data.modifiedCount > 0) {
+                        toast.success("Asset returned successfully!");
+                        refetch();
+                    }
+                } catch (error) {
+                    console.error(error);
+                    toast.error("Failed to return asset");
+                }
+            }
+        });
+    };
+
+   
+    const handlePrint = () => {
+        window.print(); 
+    };
+
+    const handlePrevPage = () => { if (currentPage > 0) setCurrentPage(currentPage - 1); }
+    const handleNextPage = () => { if (currentPage < numberOfPages - 1) setCurrentPage(currentPage + 1); }
 
     if (isLoading) return <div className="text-center mt-20"><span className="loading loading-spinner loading-lg"></span></div>;
 
@@ -70,33 +96,26 @@ const MyAssets = () => {
         <div className="container mx-auto px-4 py-8">
             <h2 className="text-3xl font-bold text-center text-sky-700 mb-8">My Assets & Requests</h2>
 
-           
+            {/* Search & Filter */}
             <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
                 <input 
                     type="text" 
                     placeholder="Search by asset name..." 
                     className="input input-bordered w-full md:w-1/3"
-                    onChange={(e) => {
-                        setSearch(e.target.value);
-                        setCurrentPage(0);
-                    }}
+                    onChange={(e) => { setSearch(e.target.value); setCurrentPage(0); }}
                 />
                 <select 
                     className="select select-bordered w-full md:w-1/4"
-                    onChange={(e) => {
-                        setFilter(e.target.value);
-                        setCurrentPage(0);
-                    }}
+                    onChange={(e) => { setFilter(e.target.value); setCurrentPage(0); }}
                 >
                     <option value="">All Status</option>
                     <option value="pending">Pending</option>
                     <option value="approved">Approved</option>
-                    <option value="rejected">Rejected</option>
                     <option value="returned">Returned</option>
                 </select>
             </div>
 
-           
+            {/* Table */}
             <div className="overflow-x-auto bg-base-100 shadow-xl rounded-lg">
                 <table className="table w-full">
                     <thead className="bg-sky-100 text-sky-800 text-lg">
@@ -127,8 +146,8 @@ const MyAssets = () => {
                                             {req.status}
                                         </div>
                                     </td>
-                                    <td>
-                                        
+                                    <td className="flex gap-2">
+                                        {/* Cancel btn */}
                                         {req.status === 'pending' && (
                                             <button 
                                                 onClick={() => handleCancel(req._id)}
@@ -138,9 +157,21 @@ const MyAssets = () => {
                                             </button>
                                         )}
                                        
+                                        {/* Print btn */}
                                         {req.status === 'approved' && (
-                                            <button className="btn btn-sm btn-ghost text-sky-600" title="Print Details" onClick={() => window.print()}>
+                                            <button onClick={handlePrint} className="btn btn-sm btn-ghost text-sky-600" title="Print Details">
                                                 <FaFilePdf /> Print
+                                            </button>
+                                        )}
+
+                                        {/* Return btn */}
+                                        {req.status === 'approved' && req.productType === 'Returnable' && (
+                                            <button 
+                                                onClick={() => handleReturn(req._id, req.assetId)}
+                                                className="btn btn-sm btn-warning text-white flex items-center gap-1"
+                                                title="Return Asset"
+                                            >
+                                                <FaUndo /> Return
                                             </button>
                                         )}
                                     </td>
@@ -155,53 +186,31 @@ const MyAssets = () => {
                 </table>
             </div>
 
+            {/* Pagination Ctrl */}
             {count > 0 && (
                 <div className='flex justify-center items-center gap-2 mt-8 mb-12 flex-wrap'>
                     <button onClick={handlePrevPage} className="btn btn-sm btn-outline" disabled={currentPage === 0}>Prev</button>
-                    
-                    <button 
-                        onClick={() => setCurrentPage(0)} 
-                        className={`btn btn-sm ${currentPage === 0 ? 'bg-sky-600 text-white' : 'btn-outline'}`}
-                    >
-                        1
-                    </button>
-
+                    <button onClick={() => setCurrentPage(0)} className={`btn btn-sm ${currentPage === 0 ? 'bg-sky-600 text-white' : 'btn-outline'}`}>1</button>
                     {currentPage > 2 && <span className="btn btn-sm btn-disabled bg-transparent border-none text-black">...</span>}
-
                     {[...Array(numberOfPages).keys()].map(page => {
-                        if (page === 0 || page === numberOfPages - 1) return null;
-                        
+                        if (page === 0 || page === numberOfPages - 1) return null; 
                         if (page >= currentPage - 1 && page <= currentPage + 1) {
                             return (
-                                <button
-                                    key={page}
-                                    onClick={() => setCurrentPage(page)}
-                                    className={`btn btn-sm ${currentPage === page ? 'bg-sky-600 text-white' : 'btn-outline'}`}
-                                >
+                                <button key={page} onClick={() => setCurrentPage(page)} className={`btn btn-sm ${currentPage === page ? 'bg-sky-600 text-white' : 'btn-outline'}`}>
                                     {page + 1}
                                 </button>
                             );
                         }
                         return null;
                     })}
-
                     {currentPage < numberOfPages - 3 && <span className="btn btn-sm btn-disabled bg-transparent border-none text-black">...</span>}
-
                     {numberOfPages > 1 && (
-                        <button 
-                            onClick={() => setCurrentPage(numberOfPages - 1)} 
-                            className={`btn btn-sm ${currentPage === numberOfPages - 1 ? 'bg-sky-600 text-white' : 'btn-outline'}`}
-                        >
+                        <button onClick={() => setCurrentPage(numberOfPages - 1)} className={`btn btn-sm ${currentPage === numberOfPages - 1 ? 'bg-sky-600 text-white' : 'btn-outline'}`}>
                             {numberOfPages}
                         </button>
                     )}
-
                     <button onClick={handleNextPage} className="btn btn-sm btn-outline" disabled={currentPage === numberOfPages - 1}>Next</button>
-                    
-                    <select value={itemsPerPage} onChange={(e) => {
-                        setItemsPerPage(parseInt(e.target.value));
-                        setCurrentPage(0);
-                    }} className="select select-bordered select-sm ml-4">
+                    <select value={itemsPerPage} onChange={(e) => { setItemsPerPage(parseInt(e.target.value)); setCurrentPage(0); }} className="select select-bordered select-sm ml-4">
                         <option value="5">5</option>
                         <option value="10">10</option>
                         <option value="20">20</option>
