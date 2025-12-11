@@ -15,7 +15,7 @@ const RequestAsset = () => {
     const { data, isLoading } = useQuery({
         queryKey: ['assets-available', search, filter, currentPage, itemsPerPage],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/assets-available?search=${search}&filter=${filter}&page=${currentPage}&size=${itemsPerPage}`);
+            const res = await axiosSecure.get(`/assets-available?search=${search}&filter=${filter}&page=${currentPage}&size=${itemsPerPage}&sort=dsc`);
             return res.data;
         },
         placeholderData: (previousData) => previousData,
@@ -24,7 +24,7 @@ const RequestAsset = () => {
     const assets = data?.result || [];
     const count = data?.count || 0;
     const numberOfPages = Math.ceil(count / itemsPerPage);
-    const pages = [...Array(numberOfPages).keys()];
+    /* const pages = [...Array(numberOfPages).keys()]; */
 
     const handleRequest = async (asset) => {
         const requestInfo = {
@@ -121,7 +121,8 @@ const RequestAsset = () => {
             {count > 0 && (
                 <div className='flex justify-center items-center gap-2 mt-8 mb-12 flex-wrap'>
                     <button onClick={handlePrevPage} className="btn btn-sm btn-outline" disabled={currentPage === 0}>Prev</button>
-            
+                    
+         
                     <button 
                         onClick={() => setCurrentPage(0)} 
                         className={`btn btn-sm ${currentPage === 0 ? 'bg-sky-600 text-white' : 'btn-outline'}`}
@@ -150,6 +151,7 @@ const RequestAsset = () => {
 
                     {currentPage < numberOfPages - 3 && <span className="btn btn-sm btn-disabled bg-transparent border-none text-black">...</span>}
 
+                    {/* Last page */}
                     {numberOfPages > 1 && (
                         <button 
                             onClick={() => setCurrentPage(numberOfPages - 1)} 
