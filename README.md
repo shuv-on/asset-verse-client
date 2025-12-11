@@ -39,3 +39,4 @@
 - **Stripe (React Stripe JS)** 
 - **SweetAlert2 & React Hot Toast**
 - **React Icons**
+- **Framer Motion**
