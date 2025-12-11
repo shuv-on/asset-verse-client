@@ -6,6 +6,7 @@ import useRole from '../../hooks/useRole';
 import toast from 'react-hot-toast';
 import HrHome from './HrHome';
 import EmployeeHome from './EmployeeHome';
+import { motion } from "framer-motion";
 
 const Home = () => {
     const { user, loading } = useAuth();
@@ -45,12 +46,19 @@ const Home = () => {
             {/*Banner Section */}
             <div className="hero min-h-[550px] bg-base-200">
                 <div className="hero-content flex-col lg:flex-row-reverse px-4 lg:px-12">
-                    <img 
+                    <motion.img 
+                        initial={{ opacity: 0, x: 100 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                         src="https://i.ibb.co/hK9dgnB/asset-management.png" 
-                        className="max-w-sm lg:max-w-lg rounded-lg shadow-2xl animate-pulse" 
+                        className="max-w-sm lg:max-w-lg rounded-lg shadow-2xl" 
                         alt="Asset Management" 
                     />
-                    <div>
+                    <motion.div
+                        initial={{ opacity: 0, x: -100 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                    >
                         <h1 className="text-5xl font-bold text-sky-700 leading-tight">
                             Manage Your Assets <br/> Like a Pro
                         </h1>
@@ -73,38 +81,72 @@ const Home = () => {
                                 Go to Profile <FaArrowRight />
                             </Link>
                         )}
-                    </div>
+                    </motion.div>
                 </div>
             </div>
 
             {/* About Section */}
             <div className="py-20 bg-white px-4">
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl font-bold text-gray-800">About <span className='text-sky-600'>AssetVerse</span></h2>
-                    <p className="text-gray-500 mt-3 text-lg">Why choose us for your corporate asset management?</p>
+                    <motion.h2 
+                        initial={{ opacity: 0, y: -20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5 }}
+                        className="text-4xl font-bold text-gray-800"
+                    >
+                        About <span className='text-sky-600'>AssetVerse</span>
+                    </motion.h2>
+                    <motion.p 
+                        initial={{ opacity: 0, y: -20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        className="text-gray-500 mt-3 text-lg"
+                    >
+                        Why choose us for your corporate asset management?
+                    </motion.p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-                    <div className="text-center p-8 border border-gray-100 rounded-2xl shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 bg-base-100">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                        className="text-center p-8 border border-gray-100 rounded-2xl shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 bg-base-100"
+                    >
                         <div className="bg-sky-100 w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6">
                             <FaBoxOpen className='text-4xl text-sky-600'/>
                         </div>
                         <h3 className="text-2xl font-bold mb-3 text-gray-700">Real-time Tracking</h3>
                         <p className="text-gray-600">Track all your company assets in real-time. Know exactly who is holding which equipment and when it was assigned.</p>
-                    </div>
-                    <div className="text-center p-8 border border-gray-100 rounded-2xl shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 bg-base-100">
+                    </motion.div>
+                    <motion.div 
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                        className="text-center p-8 border border-gray-100 rounded-2xl shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 bg-base-100"
+                    >
                         <div className="bg-purple-100 w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6">
                             <FaUsers className='text-4xl text-purple-600'/>
                         </div>
                         <h3 className="text-2xl font-bold mb-3 text-gray-700">Employee Management</h3>
                         <p className="text-gray-600">Easily add employees to your team. Employees can request assets directly, making the process smoother.</p>
-                    </div>
-                    <div className="text-center p-8 border border-gray-100 rounded-2xl shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 bg-base-100">
+                    </motion.div>
+                    <motion.div 
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.5 }}
+                        className="text-center p-8 border border-gray-100 rounded-2xl shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 bg-base-100"
+                    >
                         <div className="bg-green-100 w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6">
                             <FaCheckCircle className='text-4xl text-green-600'/>
                         </div>
                         <h3 className="text-2xl font-bold mb-3 text-gray-700">Easy Approval</h3>
                         <p className="text-gray-600">One-click approval system for HRs. Manage incoming requests efficiently and keep your inventory updated.</p>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
 
@@ -116,7 +158,13 @@ const Home = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     {/* Basic */}
-                    <div className="card bg-base-100 shadow-xl hover:scale-105 transition-transform">
+                    <motion.div 
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        whileInView={{ scale: 1, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5 }}
+                        className="card bg-base-100 shadow-xl hover:scale-105 transition-transform"
+                    >
                         <div className="card-body text-center">
                             <h2 className="text-2xl font-bold text-sky-600">Basic</h2>
                             <p className="text-5xl font-bold my-6">$5</p>
@@ -133,9 +181,15 @@ const Home = () => {
                                 Get Started
                             </button>
                         </div>
-                    </div>
+                    </motion.div>
                     {/* Standard */}
-                    <div className="card bg-base-100 shadow-xl border-4 border-purple-500 relative transform scale-105">
+                    <motion.div 
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        whileInView={{ scale: 1, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        className="card bg-base-100 shadow-xl border-4 border-purple-500 relative transform scale-105"
+                    >
                         <div className="absolute top-0 right-0 bg-purple-500 text-white text-xs px-3 py-1 rounded-bl-lg font-bold">POPULAR</div>
                         <div className="card-body text-center">
                             <h2 className="text-2xl font-bold text-purple-600">Standard</h2>
@@ -153,9 +207,15 @@ const Home = () => {
                                 Get Started
                             </button>
                         </div>
-                    </div>
+                    </motion.div>
                     {/* Premium */}
-                    <div className="card bg-base-100 shadow-xl hover:scale-105 transition-transform">
+                    <motion.div 
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        whileInView={{ scale: 1, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                        className="card bg-base-100 shadow-xl hover:scale-105 transition-transform"
+                    >
                         <div className="card-body text-center">
                             <h2 className="text-2xl font-bold text-orange-600">Premium</h2>
                             <p className="text-5xl font-bold my-6">$15</p>
@@ -172,7 +232,7 @@ const Home = () => {
                                 Get Started
                             </button>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </div>
