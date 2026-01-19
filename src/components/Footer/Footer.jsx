@@ -11,7 +11,10 @@ const Footer = () => {
                     {/* Brand Section */}
                     <div className="space-y-4">
                         <Link to="/" className="text-3xl font-bold text-white flex items-center gap-2">
-                            <span className="text-sky-500">Asset</span>Verse
+                            <h1 className='text-xl font-bold'>
+                                <span className='text-sky-600'>Asset</span>
+                                <span className='text-sky-400'>Verse</span>
+                            </h1>
                         </Link>
                         <p className="text-sm leading-relaxed text-gray-400">
                             Manage your Asset by using AssetVerse. Track, assign, and manage assets efficiently with our comprehensive solution designed for modern businesses.

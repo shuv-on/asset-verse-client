@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { FaExclamationCircle, FaHourglassHalf, FaArrowRight, FaChartPie, FaChartBar } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import Subscription from '../HR/Subscription';
 
 const HrHome = () => {
     const { user } = useAuth();
@@ -192,6 +193,7 @@ const HrHome = () => {
                     </div>
                 </div>
             </div>
+            <Subscription/>
         </div>
     );
 };
