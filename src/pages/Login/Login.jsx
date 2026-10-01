@@ -37,19 +37,22 @@ const Login = () => {
     const handleGoogleLogin = async () => {
         try {
             const result = await googleSignIn();
-            
-          
+
+            if (!result?.user) {
+                toast.error('Google sign-in was cancelled. Please try again.');
+                return;
+            }
+
             const userInfo = {
                 email: result.user?.email,
                 name: result.user?.displayName,
-                role: loginRole, 
-                status: 'verified', 
+                role: loginRole,
+                status: 'verified',
                 companyName: "",
                 companyLogo: "",
-                dateOfBirth: "", 
-            }
+                dateOfBirth: "",
+            };
 
-           
             if (loginRole === 'hr') {
                 userInfo.packageLimit = 5;
                 userInfo.currentEmployees = 0;
@@ -59,12 +62,18 @@ const Login = () => {
             await axiosPublic.post('/users', userInfo);
             refetch();
             toast.success('Google Login Successful!');
-           
             navigate(from, { replace: true });
 
         } catch (error) {
-            console.log("Google Login Error:", error);
-            toast.error(error.message);
+            const firebaseError = error?.code;
+
+            if (firebaseError === 'auth/popup-closed-by-user' || firebaseError === 'auth/cancelled-popup-request') {
+                toast.error('Google sign-in was cancelled.');
+                return;
+            }
+
+            console.log('Google Login Error:', error);
+            toast.error(error?.message || 'Google login failed. Please try again.');
         }
     };
 

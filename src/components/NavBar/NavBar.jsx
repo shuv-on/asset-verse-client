@@ -4,23 +4,23 @@ import useAuth from '../../hooks/useAuth';
 import useRole from '../../hooks/useRole';
 
 const NavBar = () => {
-
     const { user, logOut } = useAuth();
     const [role] = useRole();
+    const normalizedRole = role?.trim().toLowerCase();
     const navigate = useNavigate();
 
-    console.log("User:", user);
-    console.log("Role:", role);
-
-    const [theme, setTheme] = useState('light');
-
-    useEffect(() => {
+    const [theme, setTheme] = useState(() => {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
-            setTheme(savedTheme);
             document.documentElement.setAttribute('data-theme', savedTheme);
+            return savedTheme;
         }
-    }, []);
+        return 'light';
+    });
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+    }, [theme]);
 
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -50,23 +50,26 @@ const NavBar = () => {
         )}
 
 
-        {user && role === 'hr' && (
+        {user && (
+            <li><NavLink to="/profile" className={getLinkClass}><span className='text-gray-500 '>Profile</span></NavLink></li>
+        )}
+
+        {user && normalizedRole === 'hr' && (
             <>
                 <li><NavLink to="/asset-list" className={getLinkClass}><span className='text-gray-500 '>Asset List</span> </NavLink></li>
                 <li><NavLink to="/add-asset" className={getLinkClass}> <span className='text-gray-500 '>Add Asset</span> </NavLink></li>
                 <li><NavLink to="/all-requests" className={getLinkClass}><span className='text-gray-500 '>All Requests</span></NavLink></li>
                 <li><NavLink to="/my-employee-list" className={getLinkClass}><span className='text-gray-500 '>My Employees</span></NavLink></li>
-                <li><NavLink to="/profile" className={getLinkClass}><span className='text-gray-500 '>Profile</span></NavLink></li>
+                <li><NavLink to="/subscription" className={getLinkClass}><span className='text-gray-500 '>Subscription</span></NavLink></li>
             </>
         )}
 
 
-        {user && role === 'employee' && (
+        {user && normalizedRole === 'employee' && (
             <>
                 <li><NavLink to="/my-assets" className={getLinkClass}><span className='text-gray-500 '>My Assets</span></NavLink></li>
                 <li><NavLink to="/my-team" className={getLinkClass}><span className='text-gray-500 '>My Team</span></NavLink></li>
                 <li><NavLink to="/request-asset" className={getLinkClass}><span className='text-gray-500 '>Request Asset</span></NavLink></li>
-                <li><NavLink to="/profile" className={getLinkClass}><span className='text-gray-500 '>Profile</span></NavLink></li>
             </>
         )}
     </>;
@@ -76,7 +79,7 @@ const NavBar = () => {
             <div className="navbar bg-base-100 shadow-sm px-2 sm:px-5 sticky top-0 z-50">
                 <div className="navbar-start">
                     <div className="dropdown">
-                        <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+                        <div tabIndex={0} role="button" aria-label="Open navigation menu" className="btn btn-ghost lg:hidden">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
                             </svg>

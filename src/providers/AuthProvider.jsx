@@ -1,73 +1,91 @@
-import { createContext, useEffect, useState } from "react";
-import { 
-    GoogleAuthProvider, 
-    createUserWithEmailAndPassword, 
-    onAuthStateChanged, 
-    signInWithEmailAndPassword, 
-    signInWithPopup, 
-    signOut, 
-    updateProfile 
+import { useEffect, useState } from "react";
+import {
+    GoogleAuthProvider,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    signOut,
+    updateProfile
 } from "firebase/auth";
-import { auth } from "../Firebase/config"; 
+import { auth } from "../Firebase/config";
 import useAxiosPublic from "../hooks/useAxiosPublic";
-
-export const AuthContext = createContext(null);
+import { AuthContext } from "../context/AuthContext";
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const googleProvider = new GoogleAuthProvider();
-    const axiosPublic = useAxiosPublic(); 
+    const axiosPublic = useAxiosPublic();
 
-    const createUser = (email, password) => {
+    const createUser = async (email, password) => {
         setLoading(true);
-        return createUserWithEmailAndPassword(auth, email, password);
-    }
+        try {
+            return await createUserWithEmailAndPassword(auth, email, password);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    const signIn = (email, password) => {
+    const signIn = async (email, password) => {
         setLoading(true);
-        return signInWithEmailAndPassword(auth, email, password);
-    }
+        try {
+            return await signInWithEmailAndPassword(auth, email, password);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    const googleSignIn = () => {
+    const googleSignIn = async () => {
         setLoading(true);
-        return signInWithPopup(auth, googleProvider);
-    }
+        try {
+            return await signInWithPopup(auth, googleProvider);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    const logOut = () => {
+    const logOut = async () => {
         setLoading(true);
-        return signOut(auth);
-    }
+        try {
+            return await signOut(auth);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const updateUserProfile = (name, photo) => {
         return updateProfile(auth.currentUser, {
-            displayName: name, photoURL: photo
+            displayName: name,
+            photoURL: photo
         });
-    }
+    };
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, currentUser => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setUser(currentUser);
-            
-            if (currentUser) {
-                const userInfo = { email: currentUser.email };
-                axiosPublic.post('/jwt', userInfo)
-                    .then(res => {
-                        if (res.data.token) {
-                            localStorage.setItem('access-token', res.data.token);
-                            setLoading(false); 
-                        }
-                    })
-            } else {
+
+            try {
+                if (currentUser) {
+                    const userInfo = { email: currentUser.email };
+                    const res = await axiosPublic.post('/jwt', userInfo);
+
+                    if (res.data.token) {
+                        localStorage.setItem('access-token', res.data.token);
+                    }
+                } else {
+                    localStorage.removeItem('access-token');
+                }
+            } catch (error) {
+                console.error('Auth JWT error:', error);
                 localStorage.removeItem('access-token');
+            } finally {
                 setLoading(false);
             }
-            
         });
-        return () => {
-            return unsubscribe();
-        }
-    }, [axiosPublic])
+
+        return () => unsubscribe();
+    }, [axiosPublic]);
 
     const authInfo = {
         user,

@@ -26,7 +26,6 @@ const AllRequests = () => {
     const requests = data?.result || [];
     const count = data?.count || 0;
     const numberOfPages = Math.ceil(count / itemsPerPage);
-    const pages = [...Array(numberOfPages).keys()];
 
     const handleStatus = async (id, status, req) => {
         try {
