@@ -37,7 +37,7 @@ const RequestAsset = () => {
             requesterEmail: user.email,
             requestDate: new Date().toISOString().split('T')[0],
             status: 'pending', 
-            note: "I need this asset for my daily tasks."
+            requestNote: "I need this asset for my daily tasks."
         };
 
         try {
