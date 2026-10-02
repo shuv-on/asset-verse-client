@@ -5,7 +5,7 @@ import useRole from '../../hooks/useRole';
 
 const NavBar = () => {
     const { user, logOut } = useAuth();
-    const [role] = useRole();
+    const [role, isRoleLoading, refetchRole, roleError] = useRole();
     const normalizedRole = role?.trim().toLowerCase();
     const navigate = useNavigate();
 
@@ -71,6 +71,21 @@ const NavBar = () => {
                 <li><NavLink to="/my-team" className={getLinkClass}><span className='text-gray-500 '>My Team</span></NavLink></li>
                 <li><NavLink to="/request-asset" className={getLinkClass}><span className='text-gray-500 '>Request Asset</span></NavLink></li>
             </>
+        )}
+
+        {user && isRoleLoading && (
+            <li className="px-2 text-sm text-gray-500" role="status">
+                Loading account menu...
+            </li>
+        )}
+
+        {user && !isRoleLoading && !normalizedRole && (
+            <li className="flex items-center gap-2 px-2 text-sm text-error" role="status">
+                <span>{roleError ? 'Role service unavailable' : 'Role unavailable'}</span>
+                <button type="button" onClick={() => refetchRole()} className="btn btn-xs btn-outline btn-error">
+                    Retry
+                </button>
+            </li>
         )}
     </>;
 

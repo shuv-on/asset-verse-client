@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
     FaCheckCircle,
@@ -16,8 +16,9 @@ import {
 import useAuth from '../../hooks/useAuth';
 import useRole from '../../hooks/useRole';
 import toast from 'react-hot-toast';
-import HrHome from './HrHome';
-import EmployeeHome from './EmployeeHome';
+
+const HrHome = lazy(() => import('./HrHome'));
+const EmployeeHome = lazy(() => import('./EmployeeHome'));
 
 const Home = () => {
     const { user, loading } = useAuth();
